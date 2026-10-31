@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import me.aysh.pocketledger.data.session.SessionState
+import me.aysh.pocketledger.ui.RequestLocalNetworkAccess
 import me.aysh.pocketledger.ui.navigation.AppNavigation
 import me.aysh.pocketledger.ui.theme.PocketLedgerTheme
 
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             PocketLedgerTheme {
+                RequestLocalNetworkAccess()
                 val session by sessionStore.state.collectAsStateWithLifecycle()
                 // Exposes test tags as resource ids so UI automation can find elements.
                 Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {

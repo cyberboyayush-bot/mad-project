@@ -1,3 +1,160 @@
 <resources>
     <string name="app_name">PocketLedger</string>
+
+    <!-- Common -->
+    <string name="action_back">Back</string>
+    <string name="action_retry">Try again</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_save">Save</string>
+    <string name="action_undo">Undo</string>
+    <string name="action_clear">Clear</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
+    <string name="error_generic_title">Couldn’t load this</string>
+
+    <!-- Welcome -->
+    <string name="welcome_eyebrow">A ledger for your pocket</string>
+    <string name="welcome_headline_1">Every rupee,</string>
+    <string name="welcome_headline_2">accounted for.</string>
+    <string name="welcome_body">Log what you spend in seconds, see where it goes, and keep a calm eye on your monthly budget.</string>
+    <string name="welcome_get_started">Get started</string>
+    <string name="welcome_sign_in">I already have an account</string>
+    <string name="welcome_receipt_title">Today</string>
+    <string name="welcome_receipt_1">Filter coffee</string>
+    <string name="welcome_receipt_2">Metro card top-up</string>
+    <string name="welcome_receipt_3">Weekly groceries</string>
+    <string name="welcome_receipt_total">Total</string>
+    <string name="welcome_chart_caption">This week</string>
+
+    <!-- Auth -->
+    <string name="auth_signin_eyebrow">Welcome back</string>
+    <string name="auth_signin_title">Sign in to your ledger</string>
+    <string name="auth_signin_subtitle">Pick up right where you left off.</string>
+    <string name="auth_signup_eyebrow">New ledger</string>
+    <string name="auth_signup_title">Create your account</string>
+    <string name="auth_signup_subtitle">It takes less than a minute. No bank access needed.</string>
+    <string name="auth_name">Your name</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_password_hint">At least 8 characters</string>
+    <string name="auth_show_password">Show password</string>
+    <string name="auth_hide_password">Hide password</string>
+    <string name="auth_signin_submit">Sign in</string>
+    <string name="auth_signup_submit">Create account</string>
+    <string name="auth_switch_to_signup_prompt">New to PocketLedger?</string>
+    <string name="auth_switch_to_signup">Create an account</string>
+    <string name="auth_switch_to_signin_prompt">Already have an account?</string>
+    <string name="auth_switch_to_signin">Sign in</string>
+    <string name="strength_label">Password strength: %1$s</string>
+    <string name="strength_0">Too short</string>
+    <string name="strength_1">Weak</string>
+    <string name="strength_2">Fair</string>
+    <string name="strength_3">Good</string>
+    <string name="strength_4">Strong</string>
+
+    <!-- Tabs -->
+    <string name="tab_home">Home</string>
+    <string name="tab_history">History</string>
+    <string name="tab_stats">Stats</string>
+    <string name="tab_profile">Profile</string>
+    <string name="add_expense">Add expense</string>
+
+    <!-- Home -->
+    <string name="greeting_morning">Good morning,</string>
+    <string name="greeting_afternoon">Good afternoon,</string>
+    <string name="greeting_evening">Good evening,</string>
+    <string name="home_spent_in">Spent in %1$s</string>
+    <string name="home_left_of">%1$s left of %2$s</string>
+    <string name="home_over_by">%1$s over your %2$s budget</string>
+    <string name="home_budget_used">%1$d%% used</string>
+    <string name="home_no_budget">Set a monthly budget to track how much is left.</string>
+    <string name="home_set_budget">Set budget</string>
+    <string name="home_vs_last_month_down">%1$d%% less than %2$s</string>
+    <string name="home_vs_last_month_up">%1$d%% more than %2$s</string>
+    <string name="home_vs_last_month_same">Same as %1$s</string>
+    <plurals name="home_entries">
+        <item quantity="one">%1$d entry</item>
+        <item quantity="other">%1$d entries</item>
+    </plurals>
+    <string name="home_breakdown">Where it went</string>
+    <string name="home_recent">Recent</string>
+    <string name="home_see_all">See all</string>
+    <string name="home_empty_title">A fresh page</string>
+    <string name="home_empty_body">Nothing logged in %1$s yet. Add your first expense and your month starts taking shape.</string>
+    <string name="home_empty_action">Add your first expense</string>
+
+    <!-- History -->
+    <string name="history_title">History</string>
+    <plurals name="history_month_total">
+        <item quantity="one">%1$s across %2$d entry</item>
+        <item quantity="other">%1$s across %2$d entries</item>
+    </plurals>
+    <string name="history_month_none">No entries yet</string>
+    <plurals name="history_filtered_total">
+        <item quantity="one">%1$s in %2$d matching entry</item>
+        <item quantity="other">%1$s in %2$d matching entries</item>
+    </plurals>
+    <string name="history_filtered_none">No matching entries</string>
+    <string name="history_search">Search notes</string>
+    <string name="history_all">All</string>
+    <string name="history_empty_title">Nothing in %1$s</string>
+    <string name="history_empty_body">Expenses you add for this month will appear here, grouped by day.</string>
+    <string name="history_no_results_title">No matches</string>
+    <string name="history_no_results_body">Nothing matches these filters. Try another word or category.</string>
+    <string name="history_clear_filters">Clear filters</string>
+    <string name="history_deleted">Expense deleted</string>
+    <string name="history_delete_action">Delete</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Stats</string>
+    <string name="stats_total">Total spent</string>
+    <string name="stats_daily_avg">Daily average</string>
+    <string name="stats_vs_previous">vs %1$s</string>
+    <string name="stats_no_compare">—</string>
+    <string name="stats_by_category">By category</string>
+    <string name="stats_by_day">Day by day</string>
+    <plurals name="stats_categories_count">
+        <item quantity="one">%1$d category</item>
+        <item quantity="other">%1$d categories</item>
+    </plurals>
+    <string name="stats_avg_line">avg</string>
+    <string name="stats_empty_title">No spending in %1$s</string>
+    <string name="stats_empty_body">Charts appear once there’s something to chart. Pick another month or add an expense.</string>
+    <string name="stats_donut_description">Category breakdown chart</string>
+    <string name="stats_bars_description">Daily spending chart</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_member_since">Member since %1$s</string>
+    <string name="profile_section_ledger">Ledger</string>
+    <string name="profile_section_about">About</string>
+    <string name="profile_budget">Monthly budget</string>
+    <string name="profile_budget_none">Not set</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_currency">Currency</string>
+    <string name="profile_currency_value">Indian Rupee (₹)</string>
+    <string name="profile_version">App version</string>
+    <string name="profile_sign_out">Sign out</string>
+    <string name="profile_sign_out_title">Sign out?</string>
+    <string name="profile_sign_out_body">Your expenses stay safe on the server. You can sign back in any time.</string>
+    <string name="profile_edit_budget_title">Monthly budget</string>
+    <string name="profile_edit_budget_body">We’ll show how much is left each month. Leave empty to remove the budget.</string>
+    <string name="profile_edit_name_title">Your name</string>
+    <string name="profile_edit_name_body">Used for your greeting and initials.</string>
+
+    <!-- Editor -->
+    <string name="editor_new_title">New expense</string>
+    <string name="editor_edit_title">Edit expense</string>
+    <string name="editor_close">Close</string>
+    <string name="editor_delete">Delete expense</string>
+    <string name="editor_delete_title">Delete this expense?</string>
+    <string name="editor_delete_body">This removes it from your ledger and totals. You can’t undo this.</string>
+    <string name="editor_amount">Amount</string>
+    <string name="editor_category">Category</string>
+    <string name="editor_details">Details</string>
+    <string name="editor_note">Add a note</string>
+    <string name="editor_date">Date</string>
+    <string name="editor_save">Save expense</string>
+    <string name="editor_update">Update expense</string>
+    <string name="editor_pick_date">Choose</string>
 </resources>
