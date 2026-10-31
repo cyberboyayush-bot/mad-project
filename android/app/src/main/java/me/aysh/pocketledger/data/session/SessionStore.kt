@@ -2,9 +2,14 @@ package me.aysh.pocketledger.data.session
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.withContext
+import java.io.IOException
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -24,6 +29,8 @@ class SessionStore(context: Context, private val cipher: TokenCipher, scope: Cor
     private val dataStore = context.applicationContext.sessionDataStore
 
     val state: StateFlow<SessionState> = dataStore.data
+        // An unreadable file means there is no usable session; don't leave the splash stuck.
+        .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
         .map { prefs ->
             prefs[TOKEN_KEY]?.let(cipher::decrypt)?.let { SessionState.SignedIn(it) } ?: SessionState.SignedOut
         }
@@ -32,12 +39,19 @@ class SessionStore(context: Context, private val cipher: TokenCipher, scope: Cor
     val currentToken: String? get() = (state.value as? SessionState.SignedIn)?.token
 
     suspend fun save(token: String) {
-        val encrypted = cipher.encrypt(token)
+        val encrypted = withContext(Dispatchers.IO) { cipher.encrypt(token) }
         dataStore.edit { it[TOKEN_KEY] = encrypted }
     }
 
     suspend fun clear() {
         dataStore.edit { it.remove(TOKEN_KEY) }
+    }
+
+    /** Clears the session only if it still holds [token], so a late 401 can't end a newer session. */
+    suspend fun clearIfCurrent(token: String) {
+        dataStore.edit { prefs ->
+            if (prefs[TOKEN_KEY]?.let(cipher::decrypt) == token) prefs.remove(TOKEN_KEY)
+        }
     }
 
     private companion object {

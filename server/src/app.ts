@@ -1,9 +1,10 @@
-import { Hono } from "hono";
+import { type Context, Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
+import { getConnInfo } from "hono/bun";
 import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
-import { auth } from "./auth";
+import { auth, CLIENT_IP_HEADER } from "./auth";
 import { env } from "./env";
 import { apiError, type AppEnv } from "./http";
 import { requireSession } from "./middleware";
@@ -11,6 +12,15 @@ import { expenseRoutes } from "./routes/expenses";
 import { meRoutes } from "./routes/me";
 
 export const app = new Hono<AppEnv>();
+
+/** The real socket address of the caller, or undefined when not served by Bun (e.g. in tests). */
+function clientIp(c: Context): string | undefined {
+  try {
+    return getConnInfo(c).remote.address;
+  } catch {
+    return undefined;
+  }
+}
 
 if (env.NODE_ENV !== "test") app.use(logger());
 
@@ -26,7 +36,13 @@ app.use(
 
 app.get("/health", (c) => c.json({ ok: true }));
 
-app.on(["GET", "POST"], "/api/auth/*", (c) => auth.handler(c.req.raw));
+app.on(["GET", "POST"], "/api/auth/*", (c) => {
+  const headers = new Headers(c.req.raw.headers);
+  headers.delete(CLIENT_IP_HEADER);
+  const ip = clientIp(c);
+  if (ip) headers.set(CLIENT_IP_HEADER, ip);
+  return auth.handler(new Request(c.req.raw, { headers }));
+});
 
 app.use("/api/*", requireSession);
 app.route("/api", expenseRoutes);

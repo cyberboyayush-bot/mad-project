@@ -25,13 +25,15 @@ data class ExpenseEditorUiState(
     val isSaving: Boolean = false,
     val isDeleting: Boolean = false,
     val showAmountError: Boolean = false,
+    /** Editing an expense that couldn't be loaded: saving would overwrite it with defaults. */
+    val loadFailed: Boolean = false,
     val error: String? = null,
     /** True once saved or deleted: the screen should close. */
     val isDone: Boolean = false,
 ) {
     val isEditing: Boolean get() = expenseId != null
     val amountError: String? get() = if (showAmountError) Validation.amount(amount) else null
-    val isBusy: Boolean get() = isLoading || isSaving || isDeleting
+    val isBusy: Boolean get() = isLoading || isSaving || isDeleting || loadFailed
 }
 
 class ExpenseEditorViewModel(
@@ -60,7 +62,7 @@ class ExpenseEditorViewModel(
                     )
                 }
             } catch (e: AppException) {
-                _state.update { it.copy(isLoading = false, error = e.message) }
+                _state.update { it.copy(isLoading = false, loadFailed = true, error = e.message) }
             }
         }
     }
@@ -75,6 +77,12 @@ class ExpenseEditorViewModel(
     fun onDateChange(date: LocalDate) = _state.update { it.copy(date = minOf(date, LocalDate.now())) }
 
     fun dismissError() = _state.update { it.copy(error = null) }
+
+    fun retryLoad() {
+        val id = expenseId ?: return
+        _state.update { it.copy(isLoading = true, loadFailed = false, error = null) }
+        load(id)
+    }
 
     fun save() {
         val current = _state.value

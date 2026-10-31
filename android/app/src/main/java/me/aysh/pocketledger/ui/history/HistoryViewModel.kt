@@ -124,7 +124,7 @@ class HistoryViewModel(private val ledger: LedgerRepository) : ViewModel() {
                 it.copy(groups = groups, monthTotalPaise = groups.sumOf { g -> g.totalPaise }, isLoading = false)
             }
         } catch (e: AppException) {
-            _state.update { it.copy(error = e.message, isLoading = false) }
+            _state.update { it.copy(error = e.message, isLoading = false, groups = emptyList(), monthTotalPaise = 0) }
         }
     }
 

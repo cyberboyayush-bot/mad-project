@@ -1,9 +1,12 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { APIError } from "better-auth/api";
 import { bearer } from "better-auth/plugins";
 import { db } from "./db/client";
 import * as schema from "./db/schema";
 import { env } from "./env";
+
+export const CLIENT_IP_HEADER = "x-pocketledger-client-ip";
 
 export const auth = betterAuth({
   appName: "PocketLedger",
@@ -41,6 +44,22 @@ export const auth = betterAuth({
   },
   advanced: {
     database: { generateId: () => crypto.randomUUID() },
+    // Only trust the header our own handler sets from the socket address (see app.ts),
+    // so clients can't dodge rate limits with a forged X-Forwarded-For.
+    ipAddress: { ipAddressHeaders: [CLIENT_IP_HEADER] },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (data) => {
+          const name = data.name.trim();
+          if (name.length === 0 || name.length > 60) {
+            throw new APIError("BAD_REQUEST", { message: "Name must be between 1 and 60 characters" });
+          }
+          return { data: { ...data, name } };
+        },
+      },
+    },
   },
   logger: { disabled: env.NODE_ENV === "test" },
   plugins: [bearer({ requireSignature: true })],

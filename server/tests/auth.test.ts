@@ -38,6 +38,29 @@ describe("auth", () => {
     expect(res.status).toBe(400);
   });
 
+  test.each([
+    ["blank", "   "],
+    ["too long", "x".repeat(61)],
+  ])("sign up rejects a %s name", async (_, name) => {
+    const res = await call("POST", "/api/auth/sign-up/email", {
+      body: { name, email: `name-${crypto.randomUUID()}@example.com`, password: "long-enough-pass" },
+    });
+    expect(res.status).toBe(400);
+  });
+
+  test("sign up trims the name", async () => {
+    const { user } = await signUp({ name: "  Ayush  " });
+    expect(user.name).toBe("Ayush");
+  });
+
+  test("forged client IP headers from callers are discarded", async () => {
+    const res = await call("POST", "/api/auth/sign-in/email", {
+      body: { email: "nobody@example.com", password: "whatever-password" },
+      headers: { "x-pocketledger-client-ip": "1.2.3.4", "x-forwarded-for": "5.6.7.8" },
+    });
+    expect(res.status).toBe(401);
+  });
+
   test("clients cannot set monthlyBudget during sign up", async () => {
     const res = await call("POST", "/api/auth/sign-up/email", {
       body: {

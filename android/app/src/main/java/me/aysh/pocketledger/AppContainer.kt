@@ -23,7 +23,7 @@ class AppContainer(context: Context) {
     private val api = createApi(
         baseUrl = BuildConfig.API_BASE_URL,
         tokenProvider = { sessionStore.currentToken },
-        onUnauthorized = { appScope.launch { sessionStore.clear() } },
+        onUnauthorized = { token -> appScope.launch { sessionStore.clearIfCurrent(token) } },
     )
 
     val authRepository = AuthRepository(

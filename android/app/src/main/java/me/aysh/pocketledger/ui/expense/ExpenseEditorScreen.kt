@@ -86,7 +86,7 @@ fun ExpenseEditorScreen(expenseId: String?, onClose: () -> Unit) {
         onCategoryChange = viewModel::onCategoryChange,
         onNoteChange = viewModel::onNoteChange,
         onDateChange = viewModel::onDateChange,
-        onSave = viewModel::save,
+        onSave = if (state.loadFailed) viewModel::retryLoad else viewModel::save,
         onDelete = viewModel::delete,
     )
 }
@@ -210,7 +210,13 @@ private fun ExpenseEditorContent(
         Column(Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.md)) {
             ErrorBanner(state.error, Modifier.padding(bottom = Spacing.md))
             PrimaryButton(
-                text = stringResource(if (state.isEditing) R.string.editor_update else R.string.editor_save),
+                text = stringResource(
+                    when {
+                        state.loadFailed -> R.string.action_retry
+                        state.isEditing -> R.string.editor_update
+                        else -> R.string.editor_save
+                    },
+                ),
                 onClick = {
                     focus.clearFocus()
                     onSave()

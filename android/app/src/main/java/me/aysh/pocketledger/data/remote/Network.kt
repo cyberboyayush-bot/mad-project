@@ -22,7 +22,7 @@ val AppJson = Json {
  */
 class AuthInterceptor(
     private val tokenProvider: () -> String?,
-    private val onUnauthorized: () -> Unit,
+    private val onUnauthorized: (token: String) -> Unit,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -35,7 +35,7 @@ class AuthInterceptor(
         }
         val response = chain.proceed(authed)
         val isAuthEndpoint = request.url.encodedPath.startsWith("/api/auth/")
-        if (response.code == 401 && token != null && !isAuthEndpoint) onUnauthorized()
+        if (response.code == 401 && token != null && !isAuthEndpoint) onUnauthorized(token)
         return response
     }
 }
@@ -43,7 +43,7 @@ class AuthInterceptor(
 fun createApi(
     baseUrl: String,
     tokenProvider: () -> String?,
-    onUnauthorized: () -> Unit,
+    onUnauthorized: (token: String) -> Unit,
     json: Json = AppJson,
 ): PocketLedgerApi {
     val client = OkHttpClient.Builder()

@@ -26,17 +26,18 @@ data class StatsUiState(
     /** One bar per day of the month, zero-filled, ready for a chart. */
     val dailyTotals: List<Long>
         get() {
-            val byDate = summary?.byDay?.associate { it.date to it.totalPaise }.orEmpty()
-            return (1..month.lengthOfMonth()).map { day -> byDate[month.atDay(day)] ?: 0L }
+            val s = summary ?: return emptyList()
+            val byDate = s.byDay.associate { it.date to it.totalPaise }
+            return (1..s.month.lengthOfMonth()).map { day -> byDate[s.month.atDay(day)] ?: 0L }
         }
 
     /** Average spend per elapsed day (whole month for past months). */
     val dailyAveragePaise: Long
         get() {
-            val total = summary?.totalPaise ?: return 0
+            val s = summary ?: return 0
             val today = LocalDate.now()
-            val days = if (month == YearMonth.from(today)) today.dayOfMonth else month.lengthOfMonth()
-            return total / days.coerceAtLeast(1)
+            val days = if (s.month == YearMonth.from(today)) today.dayOfMonth else s.month.lengthOfMonth()
+            return s.totalPaise / days.coerceAtLeast(1)
         }
 
     /** Percentage change vs the previous month, or null when there's nothing to compare. */
@@ -64,7 +65,7 @@ class StatsViewModel(private val ledger: LedgerRepository) : ViewModel() {
                     val summary = ledger.summary(m)
                     _state.update { it.copy(summary = summary, isLoading = false) }
                 } catch (e: AppException) {
-                    _state.update { it.copy(error = e.message, isLoading = false) }
+                    _state.update { it.copy(error = e.message, isLoading = false, summary = null) }
                 }
             }
         }

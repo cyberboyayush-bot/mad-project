@@ -47,18 +47,18 @@ fun AppNavigation(signedIn: Boolean) {
                     onSignIn = { backStack.add(SignIn) },
                 )
             }
-            entry<SignIn> {
+            entry<SignIn> { key ->
                 AuthScreen(
                     mode = AuthMode.SignIn,
-                    onBack = { backStack.removeAt(backStack.lastIndex) },
-                    onSwitchMode = { backStack.replaceTop(SignUp) },
+                    onBack = { backStack.popIfTop(key) },
+                    onSwitchMode = { backStack.replaceTop(key, SignUp) },
                 )
             }
-            entry<SignUp> {
+            entry<SignUp> { key ->
                 AuthScreen(
                     mode = AuthMode.SignUp,
-                    onBack = { backStack.removeAt(backStack.lastIndex) },
-                    onSwitchMode = { backStack.replaceTop(SignIn) },
+                    onBack = { backStack.popIfTop(key) },
+                    onSwitchMode = { backStack.replaceTop(key, SignIn) },
                 )
             }
             entry<Main> {
@@ -70,14 +70,20 @@ fun AppNavigation(signedIn: Boolean) {
             entry<ExpenseEditor> { key ->
                 ExpenseEditorScreen(
                     expenseId = key.expenseId,
-                    onClose = { if (backStack.lastOrNull() == key) backStack.removeAt(backStack.lastIndex) },
+                    onClose = { backStack.popIfTop(key) },
                 )
             }
         },
     )
 }
 
-private fun MutableList<NavKey>.replaceTop(key: NavKey) {
-    if (isNotEmpty()) removeAt(lastIndex)
-    add(key)
+/** Pops [key] only if it's still on top, so double taps during a transition can't empty the stack. */
+private fun MutableList<NavKey>.popIfTop(key: NavKey) {
+    if (size > 1 && last() == key) removeAt(lastIndex)
+}
+
+private fun MutableList<NavKey>.replaceTop(current: NavKey, next: NavKey) {
+    if (lastOrNull() != current) return
+    removeAt(lastIndex)
+    add(next)
 }

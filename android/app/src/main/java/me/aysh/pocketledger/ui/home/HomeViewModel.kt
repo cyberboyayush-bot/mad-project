@@ -4,9 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.aysh.pocketledger.data.model.Expense
@@ -35,11 +39,19 @@ class HomeViewModel(private val ledger: LedgerRepository) : ViewModel() {
     private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
 
+    /** Each value is a load request; `true` means the user pulled to refresh. */
+    private val refreshRequests = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+
     init {
-        viewModelScope.launch { ledger.revision.collect { load() } }
+        // collectLatest cancels an in-flight load when a newer one starts, so stale results never win.
+        viewModelScope.launch {
+            merge(ledger.revision.map { false }, refreshRequests).collectLatest { load(userInitiated = it) }
+        }
     }
 
-    fun refresh() = viewModelScope.launch { load(userInitiated = true) }
+    fun refresh() {
+        refreshRequests.tryEmit(true)
+    }
 
     private suspend fun load(userInitiated: Boolean = false) {
         val month = YearMonth.now()
