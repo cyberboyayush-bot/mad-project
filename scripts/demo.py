@@ -179,8 +179,10 @@ new_email = f"ayush.{int(time.time()) % 100000}@college.edu"
 
 step("Fresh install and launch")
 shell("cmd", "uimode", "night", "no")
-shell("pm", "clear", PKG)
+# Revoking a permission kills the app, so do it before clearing data and launching.
 shell("pm", "revoke", PKG, "android.permission.ACCESS_LOCAL_NETWORK")
+shell("pm", "clear", PKG)
+time.sleep(1)
 shell("am", "start", "-W", "-n", f"{PKG}/.MainActivity")
 pause(2)
 allow = wait_for(tag="com.android.permissioncontroller:id/permission_allow_button")

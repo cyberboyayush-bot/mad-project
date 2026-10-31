@@ -9,12 +9,6 @@ data class SignUpRequest(val name: String, val email: String, val password: Stri
 data class SignInRequest(val email: String, val password: String)
 
 @Serializable
-data class AuthUserDto(val id: String, val name: String, val email: String)
-
-@Serializable
-data class AuthResponse(val user: AuthUserDto? = null)
-
-@Serializable
 data class ExpenseDto(
     val id: String,
     val amount: Long,

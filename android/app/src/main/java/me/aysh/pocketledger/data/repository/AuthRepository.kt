@@ -2,7 +2,6 @@ package me.aysh.pocketledger.data.repository
 
 import kotlinx.serialization.json.Json
 import me.aysh.pocketledger.data.remote.AppException
-import me.aysh.pocketledger.data.remote.AuthResponse
 import me.aysh.pocketledger.data.remote.PocketLedgerApi
 import me.aysh.pocketledger.data.remote.SignInRequest
 import me.aysh.pocketledger.data.remote.SignUpRequest
@@ -47,7 +46,8 @@ class AuthRepository(
         }
     }
 
-    private fun Response<AuthResponse>.requireToken(): String {
+    /** Only the session token header matters; the response body is ignored. */
+    private fun Response<Unit>.requireToken(): String {
         requireSuccess(json)
         return headers()[AUTH_TOKEN_HEADER]?.takeIf { it.isNotBlank() }
             ?: throw AppException("The server didn't return a session. Please try again.")

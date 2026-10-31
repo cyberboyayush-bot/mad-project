@@ -12,10 +12,10 @@ import retrofit2.http.Query
 interface PocketLedgerApi {
 
     @POST("api/auth/sign-up/email")
-    suspend fun signUp(@Body body: SignUpRequest): Response<AuthResponse>
+    suspend fun signUp(@Body body: SignUpRequest): Response<Unit>
 
     @POST("api/auth/sign-in/email")
-    suspend fun signIn(@Body body: SignInRequest): Response<AuthResponse>
+    suspend fun signIn(@Body body: SignInRequest): Response<Unit>
 
     @POST("api/auth/sign-out")
     suspend fun signOut(@Body body: EmptyBody = EmptyBody()): Response<Unit>
