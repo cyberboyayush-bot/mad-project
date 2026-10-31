@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: pocketledger-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pocketledger
+      POSTGRES_PASSWORD: pocketledger
+      POSTGRES_DB: pocketledger
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pocketledger-data:/var/lib/postgresql
+      - ./server/scripts/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pocketledger -d pocketledger"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pocketledger-data:
